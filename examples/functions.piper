@@ -1,0 +1,22 @@
+-- Functions in Piper
+
+-- Define functions using lambdas
+const increment = \x -> x + 1
+const double = \x -> x * 2
+
+-- Chain them together
+const incrementThenDouble = \x -> x |> increment |> double
+
+-- Use them
+10 |> increment |> print
+5 |> double |> print
+7 |> incrementThenDouble |> print
+
+-- Higher-order function: apply a function twice
+const twice = \f -> \x -> x |> f |> f
+
+-- Apply increment twice to 5: 5 + 1 + 1 = 7
+5 |> twice <| increment |> print
+
+-- Apply double twice to 3: 3 * 2 * 2 = 12
+3 |> twice <| double |> print

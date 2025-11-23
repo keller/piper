@@ -1,0 +1,1218 @@
+-- ============================================================
+-- COMPREHENSIVE PIPER FEATURE TEST
+-- Tests all language features and edge cases
+-- ============================================================
+
+"=== COMPREHENSIVE PIPER TEST ===" |> print
+
+-- ============================================================
+-- SECTION 1: Basic Literals and Types
+-- ============================================================
+
+"--- Section 1: Basic Literals ---" |> print
+
+-- Integers
+42 |> print
+0 |> print
+(-5) |> print
+
+-- Floats
+3.14 |> print
+0.001 |> print
+(-2.5) |> print
+
+-- Strings
+"Hello, World!" |> print
+"" |> print
+
+-- Booleans
+true |> print
+false |> print
+
+-- Unit
+() |> show |> print
+
+-- Lists
+[1 2 3] |> print
+[] |> print
+[[1 2] [3 4] [5 6]] |> print
+
+-- spans
+#[1 2 3] |> print
+#[] |> print
+#[#[1 2] #[3 4]] |> print
+
+-- Records
+{x = 10 y = 20} |> print
+{name = "Alice" age = 30 active = true} |> print
+
+-- ============================================================
+-- SECTION 2: Arithmetic Operators
+-- ============================================================
+
+"--- Section 2: Arithmetic Operators ---" |> print
+
+-- Addition
+5 + 3 |> print  -- 8
+1.5 + 2.5 |> print  -- 4.0
+
+-- Subtraction
+10 - 3 |> print  -- 7
+5.5 - 2.5 |> print  -- 3.0
+
+-- Multiplication
+4 * 5 |> print  -- 20
+2.5 * 4 |> print  -- 10.0
+
+-- Division
+10 / 2 |> print  -- 5.0
+15 / 4 |> print  -- 3.75
+
+-- Modulo
+10 % 3 |> print  -- 1
+17 % 5 |> print  -- 2
+
+-- Exponentiation
+2 ** 8 |> print  -- 256
+2 ** 3 ** 2 |> print  -- 512 (right-associative)
+3 * 2 ** 4 |> print  -- 48 (precedence)
+
+-- Unary minus
+(-42) |> print
+(-(3 + 4)) |> print  -- -7
+
+-- Complex expressions
+2 + 3 * 4 |> print  -- 14
+(2 + 3) * 4 |> print  -- 20
+10 - 5 - 2 |> print  -- 3
+
+-- ============================================================
+-- SECTION 3: Comparison Operators
+-- ============================================================
+
+"--- Section 3: Comparison Operators ---" |> print
+
+-- Equality
+5 = 5 |> print  -- true
+5 = 6 |> print  -- false
+3.14 = 3.14 |> print  -- true
+
+-- Greater than
+10 > 5 |> print  -- true
+5 > 10 |> print  -- false
+5 > 5 |> print  -- false
+
+-- Less than
+3 < 10 |> print  -- true
+10 < 3 |> print  -- false
+5 < 5 |> print  -- false
+
+-- Chaining comparisons
+5 > 3 |> print  -- true
+(2 + 3) > 4 |> print  -- true
+
+-- ============================================================
+-- SECTION 4: Boolean Operations
+-- ============================================================
+
+"--- Section 4: Boolean Operations ---" |> print
+
+-- Logical AND
+true |> and <| true |> print   -- true
+true |> and <| false |> print  -- false
+false |> and <| true |> print  -- false
+false |> and <| false |> print -- false
+
+-- Logical OR
+true |> or <| true |> print    -- true
+true |> or <| false |> print   -- true
+false |> or <| true |> print   -- true
+false |> or <| false |> print  -- false
+
+-- Combined with comparisons
+(5 > 3) |> and <| (10 > 8) |> print  -- true
+(5 > 3) |> and <| (10 < 8) |> print  -- false
+(5 < 3) |> or <| (10 > 8) |> print   -- true
+(5 < 3) |> or <| (10 < 8) |> print   -- false
+
+-- Range checking
+const inRange = \x ->
+  (x > 0) |> and <| (x < 100)
+
+50 |> inRange |> print   -- true
+150 |> inRange |> print  -- false
+(-10) |> inRange |> print -- false
+
+-- ============================================================
+-- SECTION 5: Conditionals
+-- ============================================================
+
+"--- Section 5: Conditionals ---" |> print
+
+-- Simple if-then-else
+const abs = \x ->
+  if x < 0
+  then 0 - x
+  else x
+
+(-42) |> abs |> print  -- 42
+10 |> abs |> print  -- 10
+0 |> abs |> print  -- 0
+
+-- Nested conditionals
+const sign = \x ->
+  if x > 0
+  then "positive"
+  else if x < 0
+  then "negative"
+  else "zero"
+
+5 |> sign |> print  -- positive
+(-3) |> sign |> print  -- negative
+0 |> sign |> print  -- zero
+
+-- Conditional expressions in complex contexts
+const max = \a -> \b ->
+  if a > b then a else b
+
+10 |> 20 <| max |> print  -- 20
+50 |> 30 <| max |> print  -- 50
+
+const min = \a -> \b ->
+  if a < b then a else b
+
+10 |> 20 <| min |> print  -- 10
+
+-- ============================================================
+-- SECTION 6: Functions and Currying
+-- ============================================================
+
+"--- Section 6: Functions and Currying ---" |> print
+
+-- Simple unary functions
+const double = \x -> x * 2
+const triple = \x -> x * 3
+const square = \x -> x * x
+
+5 |> double |> print  -- 10
+4 |> triple |> print  -- 12
+7 |> square |> print  -- 49
+
+-- Curried functions (multiple parameters)
+const add = \a -> \b -> a + b
+const multiply = \a -> \b -> a * b
+const subtract = \a -> \b -> a - b
+
+5 |> 3 <| add |> print  -- 8
+4 |> 5 <| multiply |> print  -- 20
+10 |> 3 <| subtract |> print  -- 7
+
+-- Three-argument function
+const sum3 = \a -> \b -> \c -> a + b + c
+1 |> sum3 <| 2 3 |> print  -- 6
+10 |> sum3 <| 20 30 |> print  -- 60
+
+-- Four-argument function
+const sum4 = \a -> \b -> \c -> \d -> a + b + c + d
+1 |> sum4 <| 2 3 4 |> print  -- 10
+
+-- Partial application
+const add10 = 10 <| add
+5 |> add10 |> print  -- 15
+(-3) |> add10 |> print  -- 7
+
+const multiply5 = 5 <| multiply
+4 |> multiply5 |> print  -- 20
+
+-- Function composition via pipelines
+5 |> double |> triple |> print  -- 30
+3 |> square |> double |> print  -- 18
+
+-- ============================================================
+-- SECTION 7: Recursion
+-- ============================================================
+
+"--- Section 7: Recursion ---" |> print
+
+-- Factorial
+const factorial = \n ->
+  if n = 0
+  then 1
+  else n * (n - 1 |> factorial)
+
+0 |> factorial |> print  -- 1
+1 |> factorial |> print  -- 1
+5 |> factorial |> print  -- 120
+10 |> factorial |> print  -- 3628800
+
+-- Fibonacci
+const fib = \n ->
+  if n < 2
+  then n
+  else (n - 1 |> fib) + (n - 2 |> fib)
+
+0 |> fib |> print  -- 0
+1 |> fib |> print  -- 1
+5 |> fib |> print  -- 5
+10 |> fib |> print  -- 55
+
+-- Countdown
+const countdown = \n ->
+  if n = 0
+  then 0
+  else n - 1 |> countdown
+
+100 |> countdown |> print  -- 0
+
+-- Sum from 1 to n
+const sumTo = \n ->
+  if n = 0
+  then 0
+  else n + (n - 1 |> sumTo)
+
+10 |> sumTo |> print  -- 55
+100 |> sumTo |> print  -- 5050
+
+-- ============================================================
+-- SECTION 8: List Operations
+-- ============================================================
+
+"--- Section 8: List Operations ---" |> print
+
+const nums = [1 2 3 4 5]
+
+-- head
+nums |> head |> print  -- 1
+[42] |> head |> print  -- 42
+
+-- tail
+nums |> tail |> print  -- [2, 3, 4, 5]
+[1] |> tail |> print  -- []
+
+-- length
+nums |> length |> print  -- 5
+[] |> length |> print  -- 0
+[1 2 3 4 5 6 7 8 9 10] |> length |> print  -- 10
+
+-- cons
+0 |> nums <| cons |> print  -- [0, 1, 2, 3, 4, 5]
+(-1) |> (0 |> nums <| cons) <| cons |> print  -- [-1, 0, 1, 2, 3, 4, 5]
+
+-- map
+[1 2 3] |> map <| double |> print  -- [2, 4, 6]
+[1 2 3] |> map <| square |> print  -- [1, 4, 9]
+[1 2 3] |> map <| (\x -> x * 10) |> print  -- [10, 20, 30]
+[] |> map <| double |> print  -- []
+
+-- filter
+[1 2 3 4 5 6] |> filter <| (\x -> x > 3) |> print  -- [4, 5, 6]
+[1 2 3 4 5 6] |> filter <| (\x -> (x % 2) = 0) |> print  -- [2, 4, 6]
+[1 2 3] |> filter <| (\x -> x > 10) |> print  -- []
+[] |> filter <| (\x -> x > 0) |> print  -- []
+
+-- fold
+[1 2 3 4 5] |> fold <| 0 (\acc -> \x -> acc + x) |> print  -- 15
+[1 2 3 4 5] |> fold <| 1 (\acc -> \x -> acc * x) |> print  -- 120
+[1 2 3] |> fold <| 0 (\acc -> \x -> x) |> print  -- 3 (last element)
+[] |> fold <| 42 (\acc -> \x -> acc + x) |> print  -- 42
+
+-- Chaining list operations
+[1 2 3 4 5 6 7 8 9 10]
+  |> map <| square
+  |> filter <| (\x -> x < 50)
+  |> fold <| 0 (\acc -> \x -> acc + x)
+  |> print  -- 55
+
+-- ============================================================
+-- SECTION 9: String Operations
+-- ============================================================
+
+"--- Section 9: String Operations ---" |> print
+
+-- concat with back-piping
+"Hello" |> ", " <| concat |> " World" <| concat |> "!" <| concat |> print
+"a" |> "b" <| concat |> "c" <| concat |> print  -- abc
+
+-- show
+42 |> show |> print  -- "42"
+true |> show |> print  -- "true"
+[1 2 3] |> show |> print  -- "[1, 2, 3]"
+{x = 10} |> show |> print
+
+-- Combining show and concat
+"The answer is " |> (42 |> show) <| concat |> print
+"Count: " |> (100 |> show) <| concat |> print
+
+-- ============================================================
+-- SECTION 10: Record Operations
+-- ============================================================
+
+"--- Section 10: Record Operations ---" |> print
+
+const person = {name = "Alice" age = 30 city = "NYC"}
+
+-- get with back-piping
+person |> "name" <| get |> print  -- Alice
+person |> "age" <| get |> print  -- 30
+person |> "city" <| get |> print  -- NYC
+
+-- set (mutates the record)
+person |> set <| "age" 31
+person |> "age" <| get |> print  -- 31
+
+person |> set <| "city" "Boston"
+person |> "city" <| get |> print  -- Boston
+
+-- Add new field
+person |> set <| "country" "USA"
+person |> "country" <| get |> print  -- USA
+
+-- Multiple mutations
+const config = {debug = false timeout = 30}
+config |> set <| "debug" true
+config |> set <| "timeout" 60
+config |> set <| "retries" 3
+config |> print
+
+-- ============================================================
+-- SECTION 11: span Operations
+-- ============================================================
+
+"--- Section 11: span Operations ---" |> print
+
+const v = #[10 20 30 40 50]
+
+-- get with back-piping
+v |> 0 <| get |> print  -- 10
+v |> 2 <| get |> print  -- 30
+v |> 4 <| get |> print  -- 50
+
+-- set (mutates the span)
+v |> set <| 0 100
+v |> 0 <| get |> print  -- 100
+v |> print  -- #[100, 20, 30, 40, 50]
+
+v |> set <| 2 300
+v |> print  -- #[100, 20, 300, 40, 50]
+
+-- slice (returns new span, doesn't mutate)
+v |> slice <| 0 3 |> print  -- #[100, 20, 300]
+v |> slice <| 2 5 |> print  -- #[300, 40, 50]
+v |> slice <| 1 2 |> print  -- #[20]
+v |> print  -- unchanged: #[100, 20, 300, 40, 50]
+
+-- concat (returns new span)
+#[1 2 3] |> #[4 5 6] <| concat |> print  -- #[1, 2, 3, 4, 5, 6]
+#[10] |> #[20 30] <| concat |> #[40] <| concat |> print  -- #[10, 20, 30, 40]
+#[] |> #[1 2] <| concat |> print  -- #[1, 2]
+#[1 2] |> #[] <| concat |> print  -- #[1, 2]
+
+-- User-space push and pop (since spans are fixed-length)
+-- push: append element to span, return new span
+const spanPush = \val -> \span ->
+  span |> #[val] <| concat
+
+-- pop: remove last element, return [popped_value, new_span]
+const spanPop = \span ->
+  [(span |> getLast) (span |> slice <| 0 (-1))]
+
+-- Test push
+const testSpan = #[1 2 3]
+const pushedSpan = testSpan |> 4 <| spanPush
+pushedSpan |> print  -- #[1, 2, 3, 4]
+
+-- Test pop
+const poppedResult = pushedSpan |> spanPop
+poppedResult |> print  -- [4, #[1, 2, 3]]
+poppedResult |> head |> print  -- 4 (the popped value)
+poppedResult |> tail |> head |> print  -- #[1, 2, 3] (the new span)
+
+-- to_list and to_span
+const myList = [1 2 3 4 5]
+const mySpan = myList |> to_span
+mySpan |> print  -- #[1, 2, 3, 4, 5]
+
+mySpan |> to_list |> print  -- [1, 2, 3, 4, 5]
+
+-- Round-trip conversion
+[100 200 300] |> to_span |> to_list |> print  -- [100, 200, 300]
+
+-- ============================================================
+-- SECTION 12: Box Operations (Mutable Variables)
+-- ============================================================
+
+"--- Section 12: Box Operations ---" |> print
+
+-- Create a box
+const counter = #[0]
+
+-- unbox
+counter |> unbox |> print  -- 0
+
+-- box (mutates the box)
+counter |> box <| 1
+counter |> unbox |> print  -- 1
+
+counter |> box <| 5
+counter |> unbox |> print  -- 5
+
+counter |> box <| 100
+counter |> unbox |> print  -- 100
+
+-- Using boxes in functions
+const increment = \b ->
+  b |> box <| ((b |> unbox) + 1)
+
+const x = #[10]
+x |> increment
+x |> unbox |> print  -- 11
+x |> increment
+x |> unbox |> print  -- 12
+x |> increment
+x |> increment
+x |> increment
+x |> unbox |> print  -- 15
+
+-- Accumulator pattern
+const accumulator = #[0]
+const addToAccum = \n ->
+  accumulator |> box <| ((accumulator |> unbox) + n)
+
+5 |> addToAccum
+accumulator |> unbox |> print  -- 5
+10 |> addToAccum
+accumulator |> unbox |> print  -- 15
+20 |> addToAccum
+accumulator |> unbox |> print  -- 35
+
+-- ============================================================
+-- SECTION 13: Staging vs Back-piping
+-- ============================================================
+
+"--- Section 13: Staging vs Back-piping ---" |> print
+
+-- Back-piping for single values
+5 |> 10 <| add |> print  -- 15
+3 |> 4 <| multiply |> print  -- 12
+#[1 2 3] |> 0 <| get |> print  -- 1
+
+-- Staging for multiple arguments
+1 |> sum3 <| 2 3 |> print  -- 6
+1 |> sum4 <| 2 3 4 |> print  -- 10
+
+-- Staging for function arguments
+[1 2 3] |> map <| (\x -> x * 2) |> print
+[1 2 3 4 5] |> filter <| (\x -> x > 2) |> print
+[1 2 3] |> fold <| 0 (\acc -> \x -> acc + x) |> print
+
+-- Mixed usage
+const greet = \greeting -> \name -> \punct ->
+  greeting |> " " <| concat |> name <| concat |> punct <| concat
+
+"Hello" |> "World" <| greet <| "!" |> print
+"Hi" |> "Piper" <| greet <| "?" |> print
+
+-- ============================================================
+-- SECTION 14: Shadowing and Scoping
+-- ============================================================
+
+"--- Section 14: Shadowing and Scoping ---" |> print
+
+-- Variable shadowing
+const ten = 10
+const addTen = \x -> x + ten
+
+ten |> print  -- 10
+5 |> addTen |> print  -- 15
+
+-- Shadow ten
+const ten = 20
+ten |> print  -- 20
+5 |> addTen |> print  -- 15 (closure captured original value)
+
+-- Multiple levels of shadowing
+const y = 1
+const f1 = \x -> x + y
+const y = 2
+const f2 = \x -> x + y
+const y = 3
+const f3 = \x -> x + y
+
+10 |> f1 |> print  -- 11 (y = 1)
+10 |> f2 |> print  -- 12 (y = 2)
+10 |> f3 |> print  -- 13 (y = 3)
+
+-- ============================================================
+-- SECTION 15: Complex Compositions
+-- ============================================================
+
+"--- Section 15: Complex Compositions ---" |> print
+
+-- FizzBuzz
+const fizzbuzzValue = \n ->
+  if (n % 15) = 0
+  then "FizzBuzz"
+  else if (n % 3) = 0
+  then "Fizz"
+  else if (n % 5) = 0
+  then "Buzz"
+  else n |> show
+
+const fizzbuzz = \n ->
+  if n < 1
+  then ()
+  else (n |> fizzbuzzValue |> print) |> (\_ -> (n - 1) |> fizzbuzz)
+
+15 |> fizzbuzz  -- FizzBuzz 14 13 Fizz 11 Buzz ...
+
+-- Collatz sequence length
+const collatz = \n ->
+  if n = 1
+  then 0
+  else if (n % 2) = 0
+  then 1 + (n / 2 |> collatz)
+  else 1 + ((3 * n + 1) |> collatz)
+
+1 |> collatz |> print  -- 0
+2 |> collatz |> print  -- 1
+3 |> collatz |> print  -- 7
+10 |> collatz |> print  -- 6
+
+-- GCD (recursive)
+const gcd = \a -> \b ->
+  if b = 0
+  then a
+  else a % b |> b <| gcd
+
+48 |> 18 <| gcd |> print  -- 6
+100 |> 35 <| gcd |> print  -- 5
+
+-- Power function
+const pow = \base -> \exp ->
+  if exp = 0
+  then 1
+  else base * (base |> pow <| (exp - 1))
+
+2 |> 8 <| pow |> print  -- 256
+3 |> 4 <| pow |> print  -- 81
+5 |> 3 <| pow |> print  -- 125
+
+-- List sum (recursive)
+const sumList = \lst ->
+  if (lst |> length) = 0
+  then 0
+  else (lst |> head) + (lst |> tail |> sumList)
+
+[1 2 3 4 5] |> sumList |> print  -- 15
+[10 20 30] |> sumList |> print  -- 60
+[] |> sumList |> print  -- 0
+
+-- List reverse (using fold)
+const reverse = \lst ->
+  lst |> fold <| [] (\acc -> \x -> x |> acc <| cons)
+
+[1 2 3 4 5] |> reverse |> print  -- [5, 4, 3, 2, 1]
+[1] |> reverse |> print  -- [1]
+[] |> reverse |> print  -- []
+
+-- List contains (using fold)
+const contains = \target -> \lst ->
+  lst |> fold <| false (\acc -> \x ->
+    if acc
+    then true
+    else x = target
+  )
+
+[1 2 3 4 5] |> contains <| 3 |> print  -- true
+[1 2 3 4 5] |> contains <| 10 |> print  -- false
+[] |> contains <| 5 |> print  -- false
+
+-- Range function (builds list from n to 1)
+const range = \n ->
+  if n = 0
+  then []
+  else n |> (n - 1 |> range) <| cons
+
+5 |> range |> print  -- [5, 4, 3, 2, 1]
+10 |> range |> print  -- [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+0 |> range |> print  -- []
+
+-- Sum of squares of even numbers
+const isEven = \n -> (n % 2) = 0
+[1 2 3 4 5 6 7 8 9 10]
+  |> filter <| isEven
+  |> map <| square
+  |> fold <| 0 (\acc -> \x -> acc + x)
+  |> print  -- 220
+
+-- Map-reduce pattern: count elements > 5
+[1 3 5 7 9 11 2 4 6 8 10]
+  |> map <| (\x -> if x > 5 then 1 else 0)
+  |> fold <| 0 (\acc -> \x -> acc + x)
+  |> print  -- 6
+
+-- ============================================================
+-- SECTION 16: Nested Data Structures
+-- ============================================================
+
+"--- Section 16: Nested Data Structures ---" |> print
+
+-- List of lists
+const matrix = [[1 2 3] [4 5 6] [7 8 9]]
+matrix |> print
+matrix |> head |> print  -- [1, 2, 3]
+matrix |> tail |> head |> print  -- [4, 5, 6]
+matrix |> head |> head |> print  -- 1
+
+-- span of spans
+const spanMatrix = #[#[1 2] #[3 4] #[5 6]]
+spanMatrix |> print
+spanMatrix |> 0 <| get |> print  -- #[1, 2]
+spanMatrix |> 1 <| get |> 0 <| get |> print  -- 3
+
+-- Record with nested structures
+const user = {
+  name = "Bob"
+  age = 25
+  scores = #[95 87 92]
+}
+user |> print
+user |> "name" <| get |> print  -- Bob
+user |> "scores" <| get |> 0 <| get |> print  -- 95
+user |> "scores" <| get |> 1 <| get |> print  -- 87
+
+-- List of records
+const users = [
+  {name = "Alice" age = 30}
+  {name = "Bob" age = 25}
+]
+users |> print
+users |> head |> "name" <| get |> print  -- Alice
+
+-- ============================================================
+-- SECTION 17: Edge Cases and Special Patterns
+-- ============================================================
+
+"--- Section 17: Edge Cases ---" |> print
+
+-- Empty collections
+[] |> print
+#[] |> print
+{} |> print
+
+-- Single element collections
+[42] |> print
+#[42] |> print
+
+-- Deeply nested expressions
+((((5 + 3) * 2) - 4) / 2) |> print  -- 6.0
+5 |> double |> double |> double |> print  -- 40
+
+-- Boolean values
+true |> print
+false |> print
+(5 > 3) |> print  -- true
+(10 < 5) |> print  -- false
+
+-- Zero in arithmetic
+0 + 5 |> print  -- 5
+0 * 5 |> print  -- 0
+5 - 5 |> print  -- 0
+0 ** 5 |> print  -- 0
+5 ** 0 |> print  -- 1
+
+-- Negative numbers in operations
+(-5) + 10 |> print  -- 5
+(-3) * (-4) |> print  -- 12
+(-10) / 2 |> print  -- -5.0
+
+-- Large numbers
+1000000 |> print
+999999 + 1 |> print  -- 1000000
+
+-- ============================================================
+-- SECTION 18: Practical Examples
+-- ============================================================
+
+"--- Section 18: Practical Examples ---" |> print
+
+-- Calculate average of list
+const avg = \lst ->
+  (lst |> fold <| 0 (\acc -> \x -> acc + x)) / (lst |> length)
+
+[10 20 30 40 50] |> avg |> print  -- 30.0
+[1 2 3] |> avg |> print  -- 2.0
+
+-- Find maximum in list
+const maximum = \lst ->
+  lst |> tail |> fold <| (lst |> head) (\acc -> \x ->
+    if x > acc then x else acc
+  )
+
+[3 7 2 9 1 5] |> maximum |> print  -- 9
+[100 50 200 75] |> maximum |> print  -- 200
+
+-- Find minimum in list
+const minimum = \lst ->
+  lst |> tail |> fold <| (lst |> head) (\acc -> \x ->
+    if x < acc then x else acc
+  )
+
+[3 7 2 9 1 5] |> minimum |> print  -- 1
+[100 50 200 75] |> minimum |> print  -- 50
+
+-- Count occurrences
+const countMatches = \target -> \lst ->
+  lst |> fold <| 0 (\acc -> \x ->
+    if x = target then acc + 1 else acc
+  )
+
+[1 2 3 2 4 2 5] |> countMatches <| 2 |> print  -- 3
+[1 1 1 1 1] |> countMatches <| 1 |> print  -- 5
+
+-- Take first n elements (using recursion)
+const take = \n -> \lst ->
+  if n = 0
+  then []
+  else if (lst |> length) = 0
+  then []
+  else (lst |> head) |> ((lst |> tail) |> (n - 1) <| take) <| cons
+
+[1 2 3 4 5] |> 3 <| take |> print  -- [1, 2, 3]
+[1 2 3 4 5] |> 0 <| take |> print  -- []
+[1 2 3 4 5] |> 10 <| take |> print  -- [1, 2, 3, 4, 5]
+
+-- Product of list
+const product = \lst ->
+  lst |> fold <| 1 (\acc -> \x -> acc * x)
+
+[1 2 3 4 5] |> product |> print  -- 120
+[2 3 4] |> product |> print  -- 24
+
+-- All predicate
+const all = \pred -> \lst ->
+  lst |> fold <| true (\acc -> \x ->
+    if acc then (x |> pred) else false
+  )
+
+[2 4 6 8] |> all <| isEven |> print  -- true
+[2 4 5 8] |> all <| isEven |> print  -- false
+[] |> all <| isEven |> print  -- true
+
+-- Any predicate
+const any = \pred -> \lst ->
+  lst |> fold <| false (\acc -> \x ->
+    if acc then true else (x |> pred)
+  )
+
+[1 3 5 7] |> any <| isEven |> print  -- false
+[1 3 4 7] |> any <| isEven |> print  -- true
+[] |> any <| isEven |> print  -- false
+
+-- ============================================================
+-- SECTION 19: Stateful Computations with Boxes
+-- ============================================================
+
+"--- Section 19: Stateful Computations ---" |> print
+
+-- Counter with increment and decrement
+const myCounter = #[0]
+
+const inc = \_ ->
+  myCounter |> box <| ((myCounter |> unbox) + 1)
+
+const dec = \_ ->
+  myCounter |> box <| ((myCounter |> unbox) - 1)
+
+const getCount = \_ ->
+  myCounter |> unbox
+
+myCounter |> unbox |> print  -- 0
+() |> inc
+myCounter |> unbox |> print  -- 1
+() |> inc
+() |> inc
+myCounter |> unbox |> print  -- 3
+() |> dec
+myCounter |> unbox |> print  -- 2
+
+-- Running sum with box
+const runningSum = #[0]
+const addToSum = \n ->
+  runningSum |> box <| ((runningSum |> unbox) + n)
+
+[1 2 3 4 5] |> map <| addToSum
+runningSum |> unbox |> print  -- 15
+
+-- ============================================================
+-- SECTION 20: Complex Function Composition
+-- ============================================================
+
+"--- Section 20: Complex Function Composition ---" |> print
+
+-- Pipeline of transformations
+const process = \x ->
+  x
+    |> double
+    |> (\n -> n + 5)
+    |> (\n -> n * 3)
+    |> (\n -> n - 10)
+
+5 |> process |> print  -- 35
+10 |> process |> print  -- 65
+
+-- Higher-order function that returns a function
+const makeAdder = \n ->
+  \x -> x + n
+
+const add100 = 100 <| makeAdder
+5 |> add100 |> print  -- 105
+
+const add50 = 50 <| makeAdder
+20 |> add50 |> print  -- 70
+
+-- Function that takes a function
+const applyTwice = \f -> \x ->
+  x |> f |> f
+
+5 |> applyTwice <| double |> print  -- 20
+3 |> applyTwice <| triple |> print  -- 27
+
+-- Compose two functions
+const compose = \f -> \g -> \x ->
+  x |> g |> f
+
+const doubleThenSquare = compose <| square double
+5 |> doubleThenSquare |> print  -- 100
+
+-- ============================================================
+-- SECTION 21: Advanced List Algorithms
+-- ============================================================
+
+"--- Section 21: Advanced List Algorithms ---" |> print
+
+-- Partition list into two lists based on predicate
+const partition = \pred -> \lst ->
+  lst |> fold <| {pass = [] fail = []} (\acc -> \x ->
+    if x |> pred
+    then acc |> set <| "pass" (x |> (acc |> "pass" <| get) <| cons)
+    else acc |> set <| "fail" (x |> (acc |> "fail" <| get) <| cons)
+  )
+
+const partitioned = [1 2 3 4 5 6 7 8 9 10] |> partition <| isEven
+partitioned |> "pass" <| get |> reverse |> print  -- [2, 4, 6, 8, 10]
+partitioned |> "fail" <| get |> reverse |> print  -- [1, 3, 5, 7, 9]
+
+-- Append two lists
+const append = \lst2 -> \lst1 ->
+  lst1 |> fold <| lst2 (\acc -> \x -> x |> acc <| cons) |> reverse
+
+[1 2 3] |> [4 5 6] <| append |> print  -- [1, 2, 3, 4, 5, 6]
+[] |> [1 2] <| append |> print  -- [1, 2]
+[1 2] |> [] <| append |> print  -- [1, 2]
+
+-- Flatten list of lists
+const flatten = \lstOfLsts ->
+  lstOfLsts |> fold <| [] (\acc -> \lst ->
+    lst |> acc <| append
+  )
+
+[[1 2] [3 4] [5 6]] |> flatten |> print  -- [1, 2, 3, 4, 5, 6]
+[[1] [] [2 3] []] |> flatten |> print  -- [1, 2, 3]
+[] |> flatten |> print  -- []
+
+-- Drop first n elements
+const drop = \n -> \lst ->
+  if n = 0
+  then lst
+  else if (lst |> length) = 0
+  then []
+  else (lst |> tail) |> (n - 1) <| drop
+
+[1 2 3 4 5] |> 2 <| drop |> print  -- [3, 4, 5]
+[1 2 3 4 5] |> 0 <| drop |> print  -- [1, 2, 3, 4, 5]
+[1 2 3 4 5] |> 10 <| drop |> print  -- []
+
+-- Index into list (0-based)
+const nth = \n -> \lst ->
+  if n = 0
+  then lst |> head
+  else (lst |> tail) |> (n - 1) <| nth
+
+[10 20 30 40 50] |> 0 <| nth |> print  -- 10
+[10 20 30 40 50] |> 2 <| nth |> print  -- 30
+[10 20 30 40 50] |> 4 <| nth |> print  -- 50
+
+-- Remove duplicates (preserves first occurrence)
+const unique = \lst ->
+  lst |> fold <| [] (\acc -> \x ->
+    if acc |> contains <| x
+    then acc
+    else x |> acc <| cons
+  ) |> reverse
+
+[1 2 3 2 4 3 5 1] |> unique |> print  -- [1, 2, 3, 4, 5]
+[1 1 1 1] |> unique |> print  -- [1]
+[] |> unique |> print  -- []
+
+-- ============================================================
+-- SECTION 22: String Manipulation
+-- ============================================================
+
+"--- Section 22: String Manipulation ---" |> print
+
+-- Demonstrate string concatenation with lists
+"Hello" |> " " <| concat |> "World" <| concat |> print  -- Hello World
+"a" |> "," <| concat |> "b" <| concat |> "," <| concat |> "c" <| concat |> print  -- a,b,c
+
+-- Repeat string n times
+const repeatStr = \n -> \s ->
+  if n = 0
+  then ""
+  else s |> (s |> (n - 1) <| repeatStr) <| concat
+
+"ab" |> 3 <| repeatStr |> print  -- ababab
+"x" |> 5 <| repeatStr |> print  -- xxxxx
+"test" |> 0 <| repeatStr |> print  -- ""
+
+-- ============================================================
+-- SECTION 23: More Recursion Patterns
+-- ============================================================
+
+"--- Section 23: More Recursion Patterns ---" |> print
+
+-- Ackermann function (deep recursion - using minimal values to avoid stack overflow)
+const ack = \m -> \n ->
+  if m = 0
+  then n + 1
+  else if n = 0
+  then 1 |> (m - 1) <| ack
+  else ((n - 1) |> m <| ack) |> (m - 1) <| ack
+
+5 |> 0 <| ack |> print  -- 6
+2 |> 1 <| ack |> print  -- 4
+
+-- McCarthy 91 function (also causes deep recursion for values < 100)
+-- Skipping to avoid stack overflow
+
+-- Sum of digits would require integer division, which Piper doesn't have
+-- (division always returns float)
+-- Skipping this example
+
+-- ============================================================
+-- SECTION 24: Church Encoding Patterns
+-- ============================================================
+
+"--- Section 24: Church Encoding Patterns ---" |> print
+
+-- Church numerals (0, 1, 2, 3)
+const church0 = \f -> \x -> x
+const church1 = \f -> \x -> x |> f
+const church2 = \f -> \x -> x |> f |> f
+const church3 = \f -> \x -> x |> f |> f |> f
+
+const inc = \x -> x + 1
+
+-- Convert church numeral to integer
+const churchToInt = \n ->
+  0 |> (inc |> n)
+
+church0 |> churchToInt |> print  -- 0
+church1 |> churchToInt |> print  -- 1
+church2 |> churchToInt |> print  -- 2
+church3 |> churchToInt |> print  -- 3
+
+-- Church successor
+const churchSucc = \n -> \f -> \x ->
+  x |> f |> (f |> n)
+
+church2 |> churchSucc |> churchToInt |> print  -- 3
+
+-- ============================================================
+-- SECTION 25: Advanced span Patterns
+-- ============================================================
+
+"--- Section 25: Advanced span Patterns ---" |> print
+
+-- Build span from list
+const buildSpan = [10 20 30 40 50] |> to_span
+buildSpan |> print
+
+-- Map over span (convert to list, map, convert back)
+const spanMap = \f -> \span ->
+  span |> to_list |> map <| f |> to_span
+
+#[1 2 3 4 5] |> spanMap <| double |> print  -- #[2, 4, 6, 8, 10]
+#[1 2 3 4 5] |> spanMap <| square |> print  -- #[1, 4, 9, 16, 25]
+
+-- span fill pattern (using concat to build new spans)
+const spanFill = \n -> \val ->
+  if n = 0
+  then #[]
+  else (val |> (n - 1) <| spanFill) |> #[val] <| concat
+
+0 |> 5 <| spanFill |> print  -- #[0, 0, 0, 0, 0]
+42 |> 3 <| spanFill |> print  -- #[42, 42, 42]
+
+-- span swap elements (demonstrates mutation)
+const swapTest = #[1 2 3 4 5]
+swapTest |> set <| 0 (swapTest |> 4 <| get)
+swapTest |> set <| 4 1
+swapTest |> print  -- #[5, 2, 3, 4, 1]
+
+-- ============================================================
+-- SECTION 26: Advanced Stateful Patterns
+-- ============================================================
+
+"--- Section 26: Advanced Stateful Patterns ---" |> print
+
+-- Simple counter using box
+const simpleCounter = #[0]
+const incrementAndReturn = \n ->
+  simpleCounter |> box <| ((simpleCounter |> unbox) + 1)
+  simpleCounter |> unbox
+
+1 |> incrementAndReturn |> print  -- 1
+2 |> incrementAndReturn |> print  -- 2
+3 |> incrementAndReturn |> print  -- 3
+
+-- ============================================================
+-- SECTION 27: Complex Pipeline Patterns
+-- ============================================================
+
+"--- Section 27: Complex Pipeline Patterns ---" |> print
+
+-- Chaining multiple transformations
+[1 2 3 4 5 6 7 8 9 10]
+  |> filter <| (\x -> x > 3)
+  |> map <| (\x -> x * x)
+  |> filter <| (\x -> x < 50)
+  |> fold <| 0 (\acc -> \x -> acc + x)
+  |> print  -- 120
+
+-- Complex data transformation pipeline
+const users2 = [
+  {name = "Alice" score = 85}
+  {name = "Bob" score = 92}
+  {name = "Charlie" score = 78}
+  {name = "Diana" score = 95}
+]
+
+-- Get names of users with score > 80
+users2
+  |> filter <| (\u -> (u |> "score" <| get) > 80)
+  |> map <| (\u -> u |> "name" <| get)
+  |> print  -- [Alice, Bob, Diana]
+
+-- ============================================================
+-- SECTION 28: More Edge Cases
+-- ============================================================
+
+"--- Section 28: More Edge Cases ---" |> print
+
+-- Nested function calls
+const addThreeNums = \a -> \b -> \c -> a + b + c
+((1 |> 2 <| add) |> 3 <| add) |> print  -- 6
+1 |> addThreeNums <| 2 3 |> print  -- 6
+
+-- Very long chains
+1 |> double |> double |> double |> double |> double |> print  -- 32
+
+-- Deeply nested conditionals
+const classify = \n ->
+  if n < 0
+  then "negative"
+  else if n = 0
+  then "zero"
+  else if n < 10
+  then "small"
+  else if n < 100
+  then "medium"
+  else if n < 1000
+  then "large"
+  else "very large"
+
+(-5) |> classify |> print  -- negative
+0 |> classify |> print  -- zero
+5 |> classify |> print  -- small
+50 |> classify |> print  -- medium
+500 |> classify |> print  -- large
+5000 |> classify |> print  -- very large
+
+-- Complex record operations
+const config2 = {
+  debug = false
+  timeout = 30
+  retries = 3
+  endpoints = #["api1" "api2" "api3"]
+}
+
+config2 |> print
+config2 |> "endpoints" <| get |> 0 <| get |> print  -- api1
+config2 |> "endpoints" <| get |> 1 <| get |> print  -- api2
+
+-- ============================================================
+-- SECTION 29: Practical Algorithms
+-- ============================================================
+
+"--- Section 29: Practical Algorithms ---" |> print
+
+-- Linear search with index
+const linearSearchHelper = \idx -> \target -> \remaining ->
+  if (remaining |> length) = 0
+  then (-1)
+  else if (remaining |> head) = target
+  then idx
+  else (remaining |> tail) |> target <| ((idx + 1) |> linearSearchHelper)
+
+const linearSearch = \target -> \lst ->
+  lst |> target <| (0 |> linearSearchHelper)
+
+[1 3 5 7 9 11 13 15] |> 7 <| linearSearch |> print  -- 3
+[1 3 5 7 9 11 13 15] |> 1 <| linearSearch |> print  -- 0
+[1 3 5 7 9 11 13 15] |> 15 <| linearSearch |> print  -- 7
+[1 3 5 7 9 11 13 15] |> 6 <| linearSearch |> print  -- -1
+
+-- Insertion sort (simpler recursive implementation)
+const insertSorted = \x -> \lst ->
+  if (lst |> length) = 0
+  then [x]
+  else if x < (lst |> head)
+  then x |> lst <| cons
+  else (lst |> head) |> ((lst |> tail) |> x <| insertSorted) <| cons
+
+const insertionSort = \lst ->
+  lst |> fold <| [] (\acc -> \x -> acc |> x <| insertSorted)
+
+[5 2 8 1 9 3] |> insertionSort |> print  -- [1, 2, 3, 5, 8, 9]
+[3 3 3 3] |> insertionSort |> print  -- [3, 3, 3, 3]
+[5 4 3 2 1] |> insertionSort |> print  -- [1, 2, 3, 4, 5]
+[1] |> insertionSort |> print  -- [1]
+[] |> insertionSort |> print  -- []
+
+-- ============================================================
+-- SECTION 30: Performance and Stress Tests
+-- ============================================================
+
+"--- Section 30: Performance Tests ---" |> print
+
+-- Deep recursion factorial
+15 |> factorial |> print  -- 1307674368000
+
+-- Large list operations
+50 |> range |> length |> print  -- 50
+100 |> range |> length |> print  -- 100
+
+-- Large fold
+100 |> range |> fold <| 0 (\acc -> \x -> acc + x) |> print  -- 5050
+
+-- Many span operations (concat to build larger spans)
+const perfSpan = #[1 2 3 4 5 6 7 8 9 10]
+const perfSpan2 = perfSpan |> #[11 12 13 14 15] <| concat
+perfSpan2 |> to_list |> length |> print  -- 15
+
+-- ============================================================
+-- FINAL MESSAGE
+-- ============================================================
+
+"=== ALL TESTS COMPLETE ===" |> print

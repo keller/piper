@@ -1,0 +1,382 @@
+-- All code examples from README.md
+-- This file contains every code example in the README, in order
+
+-- ============================================================
+-- Your First Piper Program
+-- ============================================================
+"Hello, Piper!" |> print
+
+-- ============================================================
+-- 1. Pipelines Are Everything
+-- ============================================================
+
+-- Triple a number
+5 |> (\x -> x * 3) |> print  -- 15
+
+-- Chain operations
+[1 2 3 4 5]
+  |> map <| (\x -> x * 2)
+  |> filter <| (\x -> x > 5)
+  |> print  -- [6 8 10]
+
+-- ============================================================
+-- 2. Functions Are Curried
+-- ============================================================
+
+-- This function takes 'a', returns a function that takes 'b'
+const add = \a -> \b -> a + b
+
+-- Use the <| operator to stage arguments
+5 |> add <| 10 |> print  -- 15
+
+-- ============================================================
+-- 3. Staging and Back-piping - Staging
+-- ============================================================
+
+-- Stage one argument
+const add10 = add <| 10
+5 |> add10 |> print  -- 15
+
+-- Or stage inline
+5 |> add <| 10 |> print  -- 15
+
+-- Stage multiple arguments
+const sum3 = \a -> \b -> \c -> a + b + c
+const result = 1 |> sum3 <| 2 3
+result |> print  -- 6
+
+-- More complex staging
+const greet = \greeting -> \name -> \punct ->
+  greeting |> " " <| concat |> name <| concat |> punct <| concat
+
+const sayHello = greet <| "Hello" "World"
+"!" |> sayHello |> print  -- Hello World!
+
+-- ============================================================
+-- 3. Staging and Back-piping - Back-piping
+-- ============================================================
+
+-- Back-pipe with <|
+5 |> 10 <| add |> print  -- 15
+
+-- Create a partially applied function
+const add10_bp = 10 <| add
+5 |> add10_bp |> print  -- 15
+
+-- ============================================================
+-- 4. No Loops. Only Recursion.
+-- ============================================================
+
+-- "loop" from 0 to 10
+const printRange = \n ->
+  if n > 10
+  then ()
+  else (n |> print) |> (\_ -> (n + 1) |> printRange)
+
+0 |> printRange  -- prints 0 through 10
+
+-- "loop" doubling until > 100
+const doubleUntil = \n ->
+  if n > 100
+  then n
+  else (n * 2) |> doubleUntil
+
+1 |> doubleUntil |> print  -- 128
+
+-- ============================================================
+-- Numbers and Math
+-- ============================================================
+
+-- Basic math
+3 + 5 |> print  -- 8
+10 - 3 |> print  -- 7
+4 * 5 |> print  -- 20
+10 / 2 |> print  -- 5
+10 % 3 |> print  -- 1
+
+-- Exponentiation
+2 ** 10 |> print  -- 1024
+2 ** 3 ** 2 |> print  -- 512 (right-associative: 2^(3^2))
+
+-- Precedence
+2 + 3 * 4 |> print  -- 14
+3 * 2 ** 4 |> print  -- 48
+
+-- ============================================================
+-- Comparisons
+-- ============================================================
+
+5 = 5 |> print           -- true
+10 > 5 |> print          -- true
+3 < 10 |> print          -- true
+
+-- Equality works on all types
+"hello" = "hello" |> print  -- true
+[1 2 3] = [1 2 3] |> print  -- true
+true = false |> print       -- false
+
+-- Great for conditionals!
+const max = \a -> \b ->
+  if a > b then a else b
+
+10 |> max <| 20 |> print -- 20
+
+-- ============================================================
+-- Lists
+-- ============================================================
+
+const nums = [1 2 3 4 5]
+
+nums |> head |> print    -- 1
+nums |> tail |> print    -- [2 3 4 5]
+nums |> length |> print  -- 5
+
+-- Cons prepends elements
+0 |> nums <| cons |> print  -- [0 1 2 3 4 5]
+
+-- ============================================================
+-- Higher-Order Functions
+-- ============================================================
+
+-- Stage a function to map
+[1 2 3]
+  |> map <| (\x -> x * 2)
+  |> print  -- [2 4 6]
+
+-- Filter with staging
+[1 5 2 8 3 9]
+  |> filter <| (\x -> x > 5)
+  |> print  -- [8 9]
+
+-- Fold with multiple staged arguments
+[1 2 3 4 5]
+  |> fold <| 0 (\acc -> \x -> acc + x)
+  |> print  -- 15
+
+-- ============================================================
+-- Defining Functions
+-- ============================================================
+
+-- Simple function
+const double = \x -> x * 2
+
+-- Multiple "parameters" via currying
+const multiply = \a -> \b -> a * b
+
+-- Use it
+3 |> multiply <| 4 |> print  -- 12
+
+-- Or make specialized versions
+const triple = 3 <| multiply
+5 |> triple |> print  -- 15
+
+-- ============================================================
+-- Mutable Data - Immutable Bindings (But You Can Shadow)
+-- ============================================================
+
+const ten = 10
+const addTen = \x -> x + ten
+
+-- Shadow ten with a new binding
+const ten = 20
+
+-- The closure still captured the original value
+5 |> addTen |> print  -- 15, not 25!
+
+-- ============================================================
+-- Mutable Data - Records: Mutable Key-Value Structures
+-- ============================================================
+
+const person = {name = "Alice" age = 30}
+
+person |> "name" <| get |> print  -- Alice
+
+-- Mutate the record (returns the record for chaining)
+person |> set <| "age" 31
+person |> "age" <| get |> print  -- 31 (the record was mutated)
+
+-- ============================================================
+-- Mutable Data - spans: Mutable Arrays
+-- ============================================================
+
+const s = #[1 2 3 4 5]
+
+-- Get element by index (0-based)
+s |> 0 <| get |> print  -- 1
+
+-- Get last element
+s |> getLast |> print  -- 5
+
+-- Set element (mutates the span)
+s |> set <| 0 10
+s |> print  -- #[10, 2, 3, 4, 5]
+-- Set last element (mutates the span)
+s |> setLast <| 99
+s |> print  -- #[10, 2, 3, 4, 99]
+
+-- Slice returns a new span
+s |> slice <| 1 3 |> print  -- #[2, 3]
+
+-- Slice with -1 excludes last element
+s |> slice <| 0 (-1) |> print  -- #[10, 2, 3, 4]
+
+-- Concatenate spans (returns new span)
+#[1 2 3] |> #[4 5 6] <| concat |> print  -- #[1, 2, 3, 4, 5, 6]
+
+-- spans are fixed-length! To push/pop, create new spans:
+const spanPush = \val -> \span ->
+  span |> #[val] <| concat
+
+const spanPop = \span ->
+  [(span |> getLast) (span |> slice <| 0 (-1))]
+
+const s2 = #[1 2 3]
+const s3 = s2 |> 4 <| spanPush
+s3 |> print  -- #[1, 2, 3, 4]
+
+const popResult = s3 |> spanPop
+popResult |> head |> print  -- 4 (popped value)
+popResult |> tail |> head |> print  -- #[1, 2, 3] (new span)
+
+-- ============================================================
+-- Mutable Data - Boxes: "Mutable Variables"
+-- ============================================================
+
+const x = #[42]
+
+-- "Read" the variable
+x |> unbox |> print  -- 42
+
+-- "Reassign" the variable
+x |> box <| 100
+x |> unbox |> print  -- 100
+
+-- Use in functions
+const counter = #[0]
+const increment = \_ ->
+  counter |> unbox
+    |> (\n -> counter |> box <| (n + 1))
+
+() |> increment
+() |> increment
+counter |> unbox |> print  -- 2
+
+const num = #[10]
+const addNum = \x -> x + (num |> unbox)
+
+-- update num
+num |> box <| 20
+
+-- The function uses the updated value
+5 |> addNum |> print  -- 25
+
+-- ============================================================
+-- Mutable Data - Convert between lists and spans
+-- ============================================================
+
+const list = [1 2 3]
+const span = list |> to_span
+span |> print  -- #[1, 2, 3]
+
+span |> to_list |> print  -- [1, 2, 3]
+
+-- ============================================================
+-- Conditionals
+-- ============================================================
+
+const abs = \x ->
+  if x < 0
+  then 0 - x
+  else x
+
+(-42) |> abs |> print  -- 42
+
+-- Nested conditionals
+const sign = \x ->
+  if x > 0
+  then "positive"
+  else if x < 0
+  then "negative"
+  else "zero"
+
+5 |> sign |> print  -- positive
+
+-- Using and in conditionals
+const isWarmDay = \temp ->
+  if ((temp > 60) |> and <| (temp < 80))
+  then "comfortable"
+  else "not comfortable"
+
+70 |> isWarmDay |> print  -- comfortable
+90 |> isWarmDay |> print  -- not comfortable
+
+-- ============================================================
+-- Boolean Logic with and/or
+-- ============================================================
+
+-- Check if number is in range
+const inRange = \x ->
+  (x > 0) |> and <| (x < 100)
+
+50 |> inRange |> print  -- true
+150 |> inRange |> print  -- false
+
+-- Check if eligible to vote (age 18+ and citizen)
+const canVote = \age -> \isCitizen ->
+  (age > 18) |> and <| isCitizen
+
+true |> 21 <| canVote |> print   -- true
+true |> 16 <| canVote |> print   -- false
+
+-- Weekend checker
+const isWeekend = \day ->
+  (day = "Saturday") |> or <| (day = "Sunday")
+
+"Saturday" |> isWeekend |> print  -- true
+"Monday" |> isWeekend |> print    -- false
+
+-- ============================================================
+-- Fibonacci
+-- ============================================================
+
+const fib = \n ->
+  if n < 2
+  then n
+  else (n - 1 |> fib) + (n - 2 |> fib)
+
+10 |> fib |> print  -- 55
+
+-- ============================================================
+-- FizzBuzz
+-- ============================================================
+
+const fizzbuzzValue = \n ->
+  if (n % 15) = 0
+  then "FizzBuzz"
+  else if (n % 3) = 0
+  then "Fizz"
+  else if (n % 5) = 0
+  then "Buzz"
+  else n |> show
+
+const fizzbuzz = \n ->
+  if n < 1
+  then ()
+  else (n |> fizzbuzzValue |> print) |> (\_ -> (n - 1) |> fizzbuzz)
+
+15 |> fizzbuzz  -- FizzBuzz 14 13 Fizz 11 Buzz ...
+
+-- ============================================================
+-- Working with Lists
+-- ============================================================
+
+const isEven = \n -> (n % 2) = 0
+const square = \n -> n * n
+const under1000 = \n -> n < 1000
+
+[1 2 3 4 5 6 7 8 9 10]
+  |> map <| square
+  |> filter <| under1000
+  |> filter <| isEven
+  |> fold <| 0 (\acc -> \x -> acc + x)
+  |> print  -- 220

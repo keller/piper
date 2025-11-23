@@ -1,0 +1,36 @@
+-- Records in Piper
+
+-- Create a record
+const person = {name = "Alice" age = 30 city = "Portland"}
+
+-- Access fields using get
+person |> get <| "name" |> print
+person |> get <| "age" |> print
+person |> get <| "city" |> print
+
+-- Use in pipelines
+const getName = get <| "name"
+person |> getName |> print
+
+-- Multiple records
+const bob = {name = "Bob" age = 42}
+const alice = {name = "Alice" age = 30}
+
+[bob alice] |> map <| (get <| "age") |> print
+
+-- Mutating records with set
+-- Records are the only mutable data structure in Piper
+const player = {name = "Charlie" score = 100 level = 1}
+
+-- Mutate a field (returns the record for chaining)
+player |> set <| "score" 150
+
+-- Verify mutation persists
+player |> get <| "score" |> print  -- 150
+
+-- Chain multiple mutations
+player
+  |> set <| "score" 200
+  |> set <| "level" 2
+
+player |> print  -- {name: Charlie, score: 200, level: 2}

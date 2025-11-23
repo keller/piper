@@ -1,0 +1,19 @@
+-- Arithmetic in Piper
+-- Arithmetic uses standard infix operators: +, -, *, /
+
+-- Add 5 to 3
+const result1 = 3 + 5
+
+-- Add 5 to -2
+const result2 = -2 + 5
+
+-- Compute (10 + 5) * 2
+const result3 = (10 + 5) * 2
+
+-- Chain of operations: 100 / 4 - 10 + 3
+const result4 = 100 / 4 - 10 + 3
+
+result1 |> print
+result2 |> print
+result3 |> print
+result4 |> print

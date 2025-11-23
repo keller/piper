@@ -1,0 +1,22 @@
+-- Lists in Piper
+
+-- Create a simple list
+const myList = [1 2 3 4 5]
+
+-- Get the head and tail
+myList |> head |> print
+myList |> tail |> print
+
+-- Add an element to the front
+0 |> cons <| myList |> print
+
+-- Get the length
+myList |> length |> print
+
+-- Create a list of strings
+const fruits = ["apple" "banana" "cherry"]
+fruits |> print
+
+-- Empty list
+const empty = []
+empty |> length |> print

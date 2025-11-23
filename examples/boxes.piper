@@ -1,0 +1,49 @@
+-- Boxes: Mutable Variables in Piper
+-- Boxes are single-element spans that act like mutable variables
+
+-- Create a box (just a span with one element)
+const x = #[42]
+
+-- Read the value
+x |> unbox |> print  -- 42
+
+-- "Reassign" the variable
+x |> box <| 100
+x |> unbox |> print  -- 100
+
+-- Another mutation
+x |> box <| 999
+x |> unbox |> print  -- 999
+
+-- Use boxes for mutable state in functions
+const counter = #[0]
+
+const increment = \_ ->
+  counter |> unbox
+    |> (\n -> counter |> box <| (n + 1))
+
+const getCount = \_ -> counter |> unbox
+
+-- Increment the counter
+() |> increment
+() |> increment
+() |> increment
+
+() |> getCount |> print  -- 3
+
+-- Keep incrementing
+() |> increment
+() |> increment
+
+() |> getCount |> print  -- 5
+
+-- The reveal: boxes are just spans!
+-- There's no special Box type - #[value] is just a span literal
+const notABox = #[1 2 3]
+const definitelyABox = #[42]
+
+-- unbox and box are just convenience functions for getLast and setLast
+notABox |> get <| 0 |> print  -- 1
+definitelyABox |> unbox |> print  -- 42 (same as getLast)
+
+-- This is how you get mutable variables in a functional language!

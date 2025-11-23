@@ -1,0 +1,40 @@
+-- Boolean Operations Examples
+
+-- Logical AND
+"--- AND operations ---" |> print
+true |> and <| true |> print   -- true
+true |> and <| false |> print  -- false
+false |> and <| true |> print  -- false
+false |> and <| false |> print -- false
+
+-- Logical OR
+"--- OR operations ---" |> print
+true |> or <| true |> print    -- true
+true |> or <| false |> print   -- true
+false |> or <| true |> print   -- true
+false |> or <| false |> print  -- false
+
+-- With comparisons
+"--- With comparisons ---" |> print
+(5 > 3) |> and <| (10 > 8) |> print  -- true
+(5 > 3) |> and <| (10 < 8) |> print  -- false
+(5 < 3) |> or <| (10 > 8) |> print   -- true
+
+-- Complex boolean logic
+"--- Complex logic ---" |> print
+const isAdult = \age -> age > 18
+
+const canDrive = \age -> \licensed ->
+  (age |> isAdult) |> and <| licensed
+
+true |> (21 <| canDrive) |> print   -- true
+false |> (21 <| canDrive) |> print  -- false
+true |> (16 <| canDrive) |> print   -- false
+
+-- Guard conditions
+const checkRange = \x ->
+  (x > 0) |> and <| (x < 100)
+
+50 |> checkRange |> print   -- true
+150 |> checkRange |> print  -- false
+(-10) |> checkRange |> print -- false

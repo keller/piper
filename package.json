@@ -1,0 +1,26 @@
+{
+  "name": "piper-lang",
+  "version": "0.1.0",
+  "description": "Piper programming language - parser, interpreter, and JS transpiler",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && mv dist/piper.js dist/piper && chmod +x dist/piper",
+    "watch": "tsc --watch",
+    "test": "npm run build && node --test dist/**/*.test.js",
+    "test:watch": "node --test --watch dist/**/*.test.js",
+    "piper": "./dist/piper"
+  },
+  "keywords": [
+    "piper",
+    "language",
+    "interpreter",
+    "transpiler"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.15.1",
+    "typescript": "^5.5.4"
+  }
+}

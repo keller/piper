@@ -1,0 +1,4 @@
+-- Hello World in Piper
+-- Top-level pipeline with implicit Unit on the left
+
+"Hello, World!" |> print

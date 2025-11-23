@@ -1,0 +1,25 @@
+-- Examples demonstrating Piper spec features
+
+-- Define increment function
+const inc = \x -> x + 1
+
+-- Test function definition and pipeline
+5 |> inc |> print                    -- 6
+
+-- Test stage operator with built-in add
+5 + 10 |> print              -- 15
+
+-- Test sub-pipeline form
+"Hello" |> ", World!" <| (\suffix -> \prefix -> prefix |> concat <| suffix) |> print
+
+-- Create unary function using stage
+const add10 = \x -> x + 10
+[123] |> map <| (\x -> x + 10) |> print     -- [11 12 13]
+
+-- Test top-level leading pipe
+-- Note: Due to parser limitations, we can't reference previous vars here
+-- So we just demonstrate the syntax works
+
+-- Test function that takes a value and transforms it
+const greet = \msg -> msg |> concat <| "!" |> print
+"Hello" |> greet
